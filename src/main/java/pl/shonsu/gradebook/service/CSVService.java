@@ -14,7 +14,7 @@ import java.util.Objects;
 @Service
 public class CSVService {
 
-    static List<Subject> subjectList;
+    List<Subject> subjectList;
 
 
     public void readCSVFile(MultipartFile file) {

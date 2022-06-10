@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class CSVHelper {
     public static String TYPE = "text/csv";
@@ -54,24 +55,29 @@ public class CSVHelper {
                         new Rate(rate.doubleValue()),
                         LocalDate.parse(csvRecord.get("RATE_DATE"), dtf),
                         csvRecord.get("DESCRIPTION"));
-                Subject subject = new Subject(csvRecord.get("SUBJECT"), List.of(grade));
-                subjects.add(subject);
-//                boolean sucker = false;
-//
-//                for (Subject s : subjects) {
-//                    System.out.println("in for");
-//                    if (Objects.equals(s.getName(), csvRecord.get("SUBJECT"))) {
-//                        s.addGrade(grade);
-//                        sucker = true;
-//                    }
-//
-//                }
-//                if(!sucker) {
-//                    subjects.add(new Subject(
-//                            csvRecord.get("SUBJECT"),
-//                            List.of(grade)));
-//                }
-//                System.out.println(subject.getName());
+//                Subject subject = new Subject(csvRecord.get("SUBJECT"), List.of(grade));
+//                subjects.add(subject);
+
+
+                boolean finded = false;
+
+                for (Subject s : subjects) {
+                    if (Objects.equals(s.getName(), csvRecord.get("SUBJECT"))) {
+                        System.out.println("add grade to existing subject");
+                        System.out.println(s.getName());
+                        s.grades().forEach(g -> System.out.println(g.rate()));
+                        s.addGrade(grade);
+                        finded = true;
+                    }
+
+                }
+
+                if (!finded) {
+                    System.out.println("its sucker");
+                    subjects.add(new Subject(
+                            csvRecord.get("SUBJECT"),
+                            List.of(grade)));
+                }
 
             }
             return subjects;
