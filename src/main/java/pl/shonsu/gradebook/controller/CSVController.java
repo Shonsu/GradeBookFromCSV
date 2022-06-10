@@ -2,27 +2,25 @@ package pl.shonsu.gradebook.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.shonsu.gradebook.helper.CSVHelper;
 import pl.shonsu.gradebook.message.ResponseMessage;
+import pl.shonsu.gradebook.model.Grade;
 import pl.shonsu.gradebook.model.Subject;
 import pl.shonsu.gradebook.service.CSVService;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/csv")
 public class CSVController {
     @Autowired
     CSVService fileService;
 
-    @PostMapping("/upload")
+    @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
         String message;
         if (CSVHelper.hasCSVFormat(file)) {
@@ -50,5 +48,9 @@ public class CSVController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+//    @GetMapping("/subjects/{name}/grades")
+//    public List<Grade> getSingleSubjectGrades(@PathVariable String name) {
+//        return CSVService.getSingleSubjectGrades(name);
+//    }
 }
 

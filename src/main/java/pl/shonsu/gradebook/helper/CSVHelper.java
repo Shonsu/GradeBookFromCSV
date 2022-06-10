@@ -12,9 +12,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CSVHelper {
     public static String TYPE = "text/csv";
@@ -28,21 +33,46 @@ public class CSVHelper {
     }
 
     public static List<Subject> csvToSubject(InputStream is) {
-        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
              CSVParser csvParser = new CSVParser(fileReader,
-                     CSVFormat.DEFAULT)) {
+                     CSVFormat.DEFAULT.builder().setHeader(HEADERs).setSkipHeaderRecord(true).setDelimiter(';').build())) {
             List<Subject> subjects = new ArrayList<>();
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+            Number rate;
+
             for (CSVRecord csvRecord : csvRecords) {
+                try {
+                    rate = format.parse(csvRecord.get("RATE"));
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
                 Grade grade = new Grade(
-                        new Rate(Double.parseDouble(csvRecord.get("RATE"))),
-                        LocalDate.parse(csvRecord.get("RATE_DATE")),
+                        new Rate(rate.doubleValue()),
+                        LocalDate.parse(csvRecord.get("RATE_DATE"), dtf),
                         csvRecord.get("DESCRIPTION"));
-                Subject subject = new Subject(
-                        csvRecord.get("SUBJECT"),
-                        List.of(grade)
-                );
+                Subject subject = new Subject(csvRecord.get("SUBJECT"), List.of(grade));
                 subjects.add(subject);
+//                boolean sucker = false;
+//
+//                for (Subject s : subjects) {
+//                    System.out.println("in for");
+//                    if (Objects.equals(s.getName(), csvRecord.get("SUBJECT"))) {
+//                        s.addGrade(grade);
+//                        sucker = true;
+//                    }
+//
+//                }
+//                if(!sucker) {
+//                    subjects.add(new Subject(
+//                            csvRecord.get("SUBJECT"),
+//                            List.of(grade)));
+//                }
+//                System.out.println(subject.getName());
+
             }
             return subjects;
         } catch (IOException e) {
