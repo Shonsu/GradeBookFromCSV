@@ -48,9 +48,9 @@ public class CSVController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    @GetMapping("/subjects/{name}/grades")
-//    public List<Grade> getSingleSubjectGrades(@PathVariable String name) {
-//        return CSVService.getSingleSubjectGrades(name);
-//    }
+    @GetMapping("/subjects/{name}/grades")
+    public List<Grade> getSingleSubjectGrades(@PathVariable String name) {
+        return CSVService.getSingleSubjectGrades(name);
+    }
 }
 

@@ -1,6 +1,5 @@
 package pl.shonsu.gradebook.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.shonsu.gradebook.helper.CSVHelper;
@@ -14,7 +13,7 @@ import java.util.Objects;
 @Service
 public class CSVService {
 
-    List<Subject> subjectList;
+    static List<Subject> subjectList;
 
 
     public void readCSVFile(MultipartFile file) {
@@ -30,9 +29,12 @@ public class CSVService {
         return subjectList.stream().toList();
     }
 
-//    public static List<Grade> getSingleSubjectGrades(String name) {
-//        List<Subject> s = subjectList.stream().filter(grades-> Objects.equals(grades.getName(), name)).toList();
-//        s.map(s->new Grade(s.grades()));
-//    }
+    public static List<Grade> getSingleSubjectGrades(String name) {
+        Subject s  = subjectList.stream().filter(subject-> Objects.equals(subject.getName(), name)).findAny().orElse(null);
+        if(s!=null) {
+            return s.grades();
+        }
+        return null;
+    }
 
 }

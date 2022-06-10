@@ -17,10 +17,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public class CSVHelper {
     public static String TYPE = "text/csv";
@@ -63,20 +60,16 @@ public class CSVHelper {
 
                 for (Subject s : subjects) {
                     if (Objects.equals(s.getName(), csvRecord.get("SUBJECT"))) {
-                        System.out.println("add grade to existing subject");
-                        System.out.println(s.getName());
-                        s.grades().forEach(g -> System.out.println(g.rate()));
                         s.addGrade(grade);
                         finded = true;
                     }
 
                 }
-
+                List<Grade> gradeList = new ArrayList<>(Arrays.asList(grade));
                 if (!finded) {
-                    System.out.println("its sucker");
                     subjects.add(new Subject(
                             csvRecord.get("SUBJECT"),
-                            List.of(grade)));
+                            gradeList));
                 }
 
             }
