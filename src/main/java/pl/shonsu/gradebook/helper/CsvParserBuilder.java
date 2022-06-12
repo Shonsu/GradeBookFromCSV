@@ -9,7 +9,7 @@ import java.io.IOException;
 
 @Component
 public class CsvParserBuilder {
-    public CSVParser build(BufferedReader bufferedReader, String[] headers, char delimiter) {
+    public CSVParser build(BufferedReader bufferedReader, Class headers, char delimiter) {
         try {
             return new CSVParser(bufferedReader, createCsvFormat(headers, delimiter));
         } catch (IOException e) {
@@ -17,7 +17,7 @@ public class CsvParserBuilder {
         }
     }
 
-    private CSVFormat createCsvFormat(String[] headers, char delimiter) {
+    private CSVFormat createCsvFormat(Class headers, char delimiter) {
         return CSVFormat.DEFAULT.builder()
                 .setHeader(headers)
                 .setSkipHeaderRecord(true)

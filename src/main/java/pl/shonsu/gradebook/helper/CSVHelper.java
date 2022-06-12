@@ -1,18 +1,21 @@
 package pl.shonsu.gradebook.helper;
 
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import pl.shonsu.gradebook.model.Grade;
 import pl.shonsu.gradebook.model.Rate;
 import pl.shonsu.gradebook.model.Subject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Component
 public class CSVHelper {
     private static SubjectsCsvRecordProvider subjectsCsvRecordProvider;
 
@@ -24,18 +27,15 @@ public class CSVHelper {
     }
 
     public static boolean hasCSVFormat(MultipartFile file) {
-        if(Objects.equals(file.getContentType(), "text/csv")){
+        if (Objects.equals(file.getContentType(), "text/csv")) {
             return true;
         }
         return false;
     }
 
     public static List<Subject> csvToSubject(InputStream inputStream) {
-        System.out.println(SubjectCsvHeaders.SUBJECT);
-
-        subjectsCsvRecordProvider.provide(inputStream);
-        System.out.println("after subjectsCsvRecordProvider.provide(inputStream)");
-        return extractSubjects(subjectsCsvRecordProvider.provide(inputStream)).stream()
+        return parse(inputStream)
+                .stream()
                 .collect(Collectors.groupingBy(GradeFromCsv::subjectName))
                 .entrySet().stream()
                 .map(entry -> new Subject(entry.getKey(), convertToGrades(entry.getValue())))
@@ -48,15 +48,22 @@ public class CSVHelper {
                 .toList();
     }
 
-    private static List<GradeFromCsv> extractSubjects(Iterable<CSVRecord> csvRecords) {
-        List<GradeFromCsv> subjectsFromCsv =  new ArrayList<>();
-        for (CSVRecord csvRecord : csvRecords) {
-            Grade grade = createGrade(csvRecord);
-            String subject = csvRecord.get(SubjectCsvHeaders.SUBJECT);
-            System.out.println(grade + " " + subject);
-            subjectsFromCsv.add(new GradeFromCsv(subject, grade));
+    private static List<GradeFromCsv> parse(InputStream inputStream) {
+        try (CSVParser csvParser = subjectsCsvRecordProvider.provide(inputStream)) {
+            return extractSubjects(csvParser);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while parsing file.");
         }
-        return subjectsFromCsv;
+    }
+
+    private static List<GradeFromCsv> extractSubjects(CSVParser csvParser) {
+        return csvParser.stream()
+                .map(csvRecord -> {
+                    Grade grade = createGrade(csvRecord);
+                    String subject = csvRecord.get(SubjectCsvHeaders.SUBJECT);
+                    return new GradeFromCsv(subject, grade);
+                })
+                .toList();
     }
 
     private static Grade createGrade(CSVRecord csvRecord) {

@@ -16,6 +16,10 @@ public class Subject {
         this(name, new ArrayList<>());
     }
 
+//    public Subject(String name, Grade grade){
+//        this(name, new ArrayList<>());
+//        grades.add(grade);
+//    }
     public Subject(String name, List<Grade> grades) {
         Objects.requireNonNull(name, "Name can't be null");
         this.name = name;

@@ -15,8 +15,7 @@ import java.util.Arrays;
 @Component
 public class SubjectsCsvRecordProvider {
 
-    private static final String[] HEADERS = {"SUBJECT","RATE","RATE_DATE","DESCRIPTION"};
-    //private static final String[] HEADERS = Arrays.stream(SubjectCsvHeaders.values()).toArray(String[]::new);
+    private static final Class HEADERS = SubjectCsvHeaders.class;
 
     private static final char DELIMITER = ';';
 
@@ -28,16 +27,8 @@ public class SubjectsCsvRecordProvider {
         this.csvParserBuilder = csvParserBuilder;
     }
 
-    public Iterable<CSVRecord> provide(InputStream inputStream) {
-        System.out.println("inside SubjectsCsvRecordProvider.provide");
+    public CSVParser provide(InputStream inputStream) {
         BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, CHARSET));
-        System.out.println("after new buffer reader");
-        CSVParser csvParser = csvParserBuilder.build(fileReader, HEADERS, DELIMITER);
-        System.out.println("after csvparserbuild");
-        try {
-            return csvParser.getRecords();
-        } catch (IOException e) {
-            throw new RuntimeException("Error while reading csv records.", e);
-        }
+        return csvParserBuilder.build(fileReader, HEADERS, DELIMITER);
     }
 }

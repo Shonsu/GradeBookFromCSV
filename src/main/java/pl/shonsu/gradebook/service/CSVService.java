@@ -13,12 +13,15 @@ import java.util.Objects;
 @Service
 public class CSVService {
 
+    CSVHelper csvHelper;
     static List<Subject> subjectList;
-
+    public CSVService(CSVHelper csvHelper) {
+        this.csvHelper = csvHelper;
+    }
 
     public void readCSVFile(MultipartFile file) {
         try {
-            subjectList = CSVHelper.csvToSubject(file.getInputStream());
+            subjectList = csvHelper.csvToSubject(file.getInputStream());
 
         } catch (IOException e) {
             throw new RuntimeException("fail to store csv data: " + e.getMessage());
