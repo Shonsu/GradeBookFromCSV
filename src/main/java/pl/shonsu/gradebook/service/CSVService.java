@@ -30,11 +30,11 @@ public class CSVService {
     }
 
     public static List<Grade> getSingleSubjectGrades(String name) {
-        Subject s  = subjectList.stream().filter(subject-> Objects.equals(subject.getName(), name)).findAny().orElse(null);
-        if(s!=null) {
-            return s.grades();
-        }
-        return null;
+        return subjectList.stream()
+                .filter(subject -> Objects.equals(subject.getName(), name))
+                .findAny()
+                .map(Subject::grades)
+                .orElse(List.of());
     }
 
 }

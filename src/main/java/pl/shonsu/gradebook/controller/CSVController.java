@@ -37,7 +37,7 @@ public class CSVController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
     }
     @GetMapping("/subjects")
-    public ResponseEntity<List<Subject>> getAllTutorials() {
+    public ResponseEntity<List<Subject>> getAllSubjects() {
         try {
             List<Subject> subjects = fileService.getAllSubjects();
             if (subjects.isEmpty()) {
