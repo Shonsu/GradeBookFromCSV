@@ -1,12 +1,11 @@
 package pl.shonsu.gradebook.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import pl.shonsu.gradebook.helper.CSVHelper;
 import pl.shonsu.gradebook.model.Grade;
 import pl.shonsu.gradebook.model.Subject;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,13 +18,8 @@ public class CSVService {
         this.csvHelper = csvHelper;
     }
 
-    public void readCSVFile(MultipartFile file) {
-        try {
-            subjectList = csvHelper.csvToSubject(file.getInputStream());
-
-        } catch (IOException e) {
-            throw new RuntimeException("fail to store csv data: " + e.getMessage());
-        }
+    public void readCSVFile(InputStream inputStream) {
+        subjectList = csvHelper.csvToSubject(inputStream);
     }
 
     public List<Subject> getAllSubjects() {

@@ -3,7 +3,6 @@ package pl.shonsu.gradebook.helper;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import pl.shonsu.gradebook.model.Grade;
 import pl.shonsu.gradebook.model.Rate;
 import pl.shonsu.gradebook.model.Subject;
@@ -12,28 +11,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
 public class CSVHelper {
-    private static SubjectsCsvRecordProvider subjectsCsvRecordProvider;
+    private final SubjectsCsvRecordProvider subjectsCsvRecordProvider;
 
-    private static CsvCellParser csvCellParser;
+    private final CsvCellParser csvCellParser;
 
     public CSVHelper(SubjectsCsvRecordProvider subjectsCsvRecordProvider, CsvCellParser csvCellParser) {
         this.subjectsCsvRecordProvider = subjectsCsvRecordProvider;
         this.csvCellParser = csvCellParser;
     }
 
-    public static boolean hasCSVFormat(MultipartFile file) {
-        if (Objects.equals(file.getContentType(), "text/csv")) {
-            return true;
-        }
-        return false;
-    }
-
-    public static List<Subject> csvToSubject(InputStream inputStream) {
+    public List<Subject> csvToSubject(InputStream inputStream) {
         return parse(inputStream)
                 .stream()
                 .collect(Collectors.groupingBy(GradeFromCsv::subjectName))
@@ -48,7 +39,7 @@ public class CSVHelper {
                 .toList();
     }
 
-    private static List<GradeFromCsv> parse(InputStream inputStream) {
+    private List<GradeFromCsv> parse(InputStream inputStream) {
         try (CSVParser csvParser = subjectsCsvRecordProvider.provide(inputStream)) {
             return extractSubjects(csvParser);
         } catch (IOException e) {
@@ -56,7 +47,7 @@ public class CSVHelper {
         }
     }
 
-    private static List<GradeFromCsv> extractSubjects(CSVParser csvParser) {
+    private List<GradeFromCsv> extractSubjects(CSVParser csvParser) {
         return csvParser.stream()
                 .map(csvRecord -> {
                     Grade grade = createGrade(csvRecord);
@@ -66,7 +57,7 @@ public class CSVHelper {
                 .toList();
     }
 
-    private static Grade createGrade(CSVRecord csvRecord) {
+    private Grade createGrade(CSVRecord csvRecord) {
         Double rate = csvCellParser.parseDouble(csvRecord.get(SubjectCsvHeaders.RATE));
         LocalDate rateDate = csvCellParser.parseDate(csvRecord.get(SubjectCsvHeaders.RATE_DATE));
         String description = csvRecord.get(SubjectCsvHeaders.DESCRIPTION);
