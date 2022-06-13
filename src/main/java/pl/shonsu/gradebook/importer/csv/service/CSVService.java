@@ -1,7 +1,7 @@
-package pl.shonsu.gradebook.service;
+package pl.shonsu.gradebook.importer.csv.service;
 
 import org.springframework.stereotype.Service;
-import pl.shonsu.gradebook.helper.CSVHelper;
+import pl.shonsu.gradebook.importer.csv.helper.CSVHelper;
 import pl.shonsu.gradebook.model.Grade;
 import pl.shonsu.gradebook.model.Subject;
 

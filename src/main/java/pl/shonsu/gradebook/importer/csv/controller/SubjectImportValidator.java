@@ -1,4 +1,4 @@
-package pl.shonsu.gradebook.controller;
+package pl.shonsu.gradebook.importer.csv.controller;
 
 import org.springframework.web.multipart.MultipartFile;
 

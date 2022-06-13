@@ -1,4 +1,4 @@
-package pl.shonsu.gradebook.controller;
+package pl.shonsu.gradebook.importer.csv.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.shonsu.gradebook.message.ResponseMessage;
 import pl.shonsu.gradebook.model.Grade;
 import pl.shonsu.gradebook.model.Subject;
-import pl.shonsu.gradebook.service.CSVService;
+import pl.shonsu.gradebook.importer.csv.service.CSVService;
 
 import java.io.IOException;
 import java.io.InputStream;

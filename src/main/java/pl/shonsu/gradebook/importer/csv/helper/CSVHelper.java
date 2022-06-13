@@ -1,8 +1,11 @@
-package pl.shonsu.gradebook.helper;
+package pl.shonsu.gradebook.importer.csv.helper;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
+import pl.shonsu.gradebook.importer.csv.parser.CsvCellParser;
+import pl.shonsu.gradebook.importer.csv.parser.SubjectCsvHeaders;
+import pl.shonsu.gradebook.importer.csv.parser.SubjectsCsvRecordProvider;
 import pl.shonsu.gradebook.model.Grade;
 import pl.shonsu.gradebook.model.Rate;
 import pl.shonsu.gradebook.model.Subject;
