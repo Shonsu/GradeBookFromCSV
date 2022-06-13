@@ -1,4 +1,4 @@
-package pl.shonsu.gradebook.helper;
+package pl.shonsu.gradebook.importer.csv.parser;
 
 import org.springframework.stereotype.Component;
 
