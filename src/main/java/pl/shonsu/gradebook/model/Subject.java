@@ -93,4 +93,25 @@ public class Subject {
                 .filter(grade -> Objects.equals(grade.description(), null))
                 .toList();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subject subject = (Subject) o;
+        return Objects.equals(name, subject.name) && Objects.equals(grades, subject.grades);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, grades);
+    }
+
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "name='" + name + '\'' +
+                ", grades=" + grades +
+                '}';
+    }
 }

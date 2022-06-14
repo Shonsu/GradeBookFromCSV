@@ -19,8 +19,7 @@ public class CsvParserBuilder {
 
     private CSVFormat createCsvFormat(Class<SubjectCsvHeaders> headers, char delimiter) {
         return CSVFormat.DEFAULT.builder()
-                .setHeader(headers)
-                .setSkipHeaderRecord(true)
+                .setHeader()
                 .setDelimiter(delimiter)
                 .build();
     }
