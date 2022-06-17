@@ -14,17 +14,47 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 public class CSVHelper {
     private final SubjectsCsvRecordProvider subjectsCsvRecordProvider;
+
+    private static final String VALID_HEADERS = SubjectCsvHeaders.names().stream().map(String::valueOf).collect(Collectors.joining(";"));
 
     private final CsvCellParser csvCellParser;
 
     public CSVHelper(SubjectsCsvRecordProvider subjectsCsvRecordProvider, CsvCellParser csvCellParser) {
         this.subjectsCsvRecordProvider = subjectsCsvRecordProvider;
         this.csvCellParser = csvCellParser;
+    }
+
+    public void checkValidHeaders(CSVParser csvParser) {
+
+        List<String> headersNamesFromCsv = csvParser.getHeaderNames();
+        List<String> expectedHeaderNames = SubjectCsvHeaders.names();
+        if (headersNamesFromCsv.size() != expectedHeaderNames.size()) {
+            throw new RuntimeException("Wrong number of columns! Expected " + expectedHeaderNames.size());
+        }
+        IntStream
+                .range(0, expectedHeaderNames.size())
+                .filter(headerNumber -> !Objects.equals(headersNamesFromCsv.get(headerNumber), expectedHeaderNames.get(headerNumber)))
+                .findFirst()
+                .ifPresent(headerNumber -> {
+                    throw new RuntimeException("Wrong header [" +
+                            headersNamesFromCsv.get(headerNumber) +
+                            "] at column [" +
+                            headerNumber +
+                            "]" +
+                            System.lineSeparator() +
+                            "Headers should looks like: [" +
+                            VALID_HEADERS +
+                            "]"
+                    );
+                });
+
     }
 
     public List<Subject> csvToSubject(InputStream inputStream) {
@@ -51,13 +81,18 @@ public class CSVHelper {
     }
 
     private List<GradeFromCsv> extractSubjects(CSVParser csvParser) {
-        return csvParser.stream()
+        checkValidHeaders(csvParser);
+        List<GradeFromCsv> grades = csvParser.stream()
                 .map(csvRecord -> {
                     Grade grade = createGrade(csvRecord);
                     String subject = csvRecord.get(SubjectCsvHeaders.SUBJECT);
                     return new GradeFromCsv(subject, grade);
                 })
                 .toList();
+        if (grades.isEmpty()) {
+            throw new RuntimeException("Csv file has no data.");
+        }
+        return grades;
     }
 
     private Grade createGrade(CSVRecord csvRecord) {

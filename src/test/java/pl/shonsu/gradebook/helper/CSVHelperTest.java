@@ -18,8 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CSVHelperTest {
@@ -53,26 +52,39 @@ class CSVHelperTest {
 
     @Test
     public void validSubjectsWithUnorderedColumns() {
-        List<Subject> providedSubjects =
-                assertDoesNotThrow(() -> getSubjectsFromFile("validSubjectsWithUnorderedColumns.csv"));
-        List<Subject> expectedSubjects = createExpectedSubjects();
-        assertEquals(expectedSubjects, providedSubjects);
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> getSubjectsFromFile("validSubjectsWithUnorderedColumns.csv"));
+
+        assertEquals("Wrong header [RATE] at column [0]" +
+                System.lineSeparator() +
+                "Headers should looks like: [SUBJECT;RATE;RATE_DATE;DESCRIPTION]", exception.getMessage());
     }
 
     @Test
     public void validSubjectsWithoutHeaderRow() {
-        List<Subject> providedSubjects =
-                assertDoesNotThrow(() -> getSubjectsFromFile("validSubjectsWithoutHeaderRow.csv"));
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> getSubjectsFromFile("validSubjectsWithoutHeaderRow.csv"));
+
+        assertEquals("Wrong header [MATH] at column [0]" +
+                System.lineSeparator() +
+                "Headers should looks like: [SUBJECT;RATE;RATE_DATE;DESCRIPTION]", exception.getMessage());
 //        tu powinien lecieć nasz wyjątek, że nie można zamportować danych jeśli nie mamy headerów i
 //        powinno być podane jakie nazwy kolumn są poprawne i jakieś wartości dla danej kolumny są poprawne
     }
 
     @Test
     public void fileWithOnlyHeaders() {
-        List<Subject> providedSubjects =
-                assertDoesNotThrow(() -> getSubjectsFromFile("fileWithOnlyHeaders.csv"));
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> getSubjectsFromFile("fileWithOnlyHeaders.csv"));
+
+        assertEquals("Csv file has no data.", exception.getMessage());
 //        tu powinien lecieć nasz wyjątek, że nie można zamportować danych jeśli nie ma żadnych danych i
 //        powinno być podane jakie nazwy kolumn są poprawne i jakieś wartości dla danej kolumny są poprawne
+
     }
 
     private List<Subject> createExpectedSubjects() {
