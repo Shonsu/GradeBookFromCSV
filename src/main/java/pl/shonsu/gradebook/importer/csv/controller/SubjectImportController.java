@@ -23,7 +23,6 @@ public class SubjectImportController {
 
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseMessage> uploadCsv(@RequestParam("file") MultipartFile file) {
-
         String message;
         SubjectImportValidator.validate(file);
         InputStream inputStream;
